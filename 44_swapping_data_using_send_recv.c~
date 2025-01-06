@@ -1,0 +1,80 @@
+
+#include<stdio.h>
+#include<mpi.h>
+#include<stdlib.h>
+
+int main(){
+
+  MPI_Init(NULL,NULL);
+
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int size;
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  int* number ; 
+if(rank == 0){
+number =(int * )malloc(sizeof(int)*N);
+
+for(int i =0 ;i<N ;i++){
+number[i]=i+1 ;
+
+}
+
+
+
+MPI_Send(number,N,MPI_INT,1,0,MPI_COMM_WORLD);
+
+printf("rank %d sent number %d to process 1\n",rank , number[0] );
+
+
+MPI_Recv(number,N,MPI_INT,1,0,MPI_COMM_WORLD , MPI_STATUS_IGNORE);
+
+printf("rank %d received number %d from process 0\n",rank ,number[0]);
+
+
+for(int i =0 ;i<N ;i++){
+printf("%d ,",number[i]);
+}
+printf("\n");
+
+
+
+
+}
+
+if(rank == 1){
+
+
+
+number =(int * )malloc(sizeof(int)*N);
+
+for(int i =0 ;i<N ;i++){
+number[i]=i+3 ;
+
+}
+
+
+MPI_Send(number,N,MPI_INT,0,0,MPI_COMM_WORLD);
+
+printf("rank %d sent number %d to process 0\n",number[0] );
+
+MPI_Recv(number,N,MPI_INT,0,0,MPI_COMM_WORLD , MPI_STATUS_IGNORE);
+
+printf("rank %d received from process 1\n",rank);
+
+
+for(int i =0 ;i<N ;i++){
+printf("%d ,",number[i]);
+}
+printf("\n");
+
+
+
+
+
+}
+
+  MPI_Finalize();
+
+  return 0;
+}

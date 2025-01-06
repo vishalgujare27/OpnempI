@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <mpi.h>
 
-#define N 100
+#define N 100000000
 
 int main() {
     int rank, size;
@@ -10,39 +10,44 @@ int main() {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int chunksize = N / size;
-    int* global_arr = NULL;
-    int* local_arr = (int*)malloc(chunksize * sizeof(int));
+long long    int chunksize = N / size;
+   long long  int* global_arr = NULL;
+long long  int* local_arr = (long long int*)malloc(chunksize * sizeof(long long int));
 
     if (rank == 0) {
-        global_arr = (int*)malloc(N * sizeof(int));
-        for (int i = 0; i < N; i++) {
+        global_arr = (long long int*)malloc(N * sizeof(long long int));
+        for (long int i = 0; i < N; i++) {
             global_arr[i] = i + 1;
         }
     }
+double start_time = MPI_Wtime();
 
-    MPI_Scatter(global_arr, chunksize, MPI_INT, local_arr, chunksize, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(global_arr, chunksize, MPI_LONG_LONG_INT, local_arr, chunksize, MPI_LONG_LONG_INT, 0, MPI_COMM_WORLD);
 
-    int local_sum = 0;
-    for (int i = 0; i < chunksize; i++) {
+  long long  int local_sum = 0;
+    for (long int i = 0; i < chunksize; i++) {
         local_sum += local_arr[i];
     }
 
-    int* global_sums = NULL;
+    long long int* global_sums = NULL;
     if (rank == 0) {
-        global_sums = (int*)malloc(size * sizeof(int));
+        global_sums = (long long int*)malloc(size * sizeof(long long int));
     }
 
-    MPI_Gather(&local_sum, 1, MPI_INT, global_sums, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(&local_sum, 1, MPI_LONG_LONG_INT, global_sums, 1, MPI_LONG_LONG_INT, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
-        int total_sum = 0;
-        printf ("Array of local sums: \n");
-        for (int i = 0; i < size; i++) {
-            printf("%d ", global_sums[i]);
+       long long int total_sum = 0;
+        for (long int i = 0; i < size; i++) {
             total_sum += global_sums[i];
         }
-        printf("\nTotal sum = %d\n", total_sum);
+
+        printf("\nTotal sum = %lld\n", total_sum);
+double end_time = MPI_Wtime();
+if(rank == 0 ){
+printf("Total time taken : %lf ",(end_time - start_time) );
+
+}
         free(global_arr);
         free(global_sums);
     }

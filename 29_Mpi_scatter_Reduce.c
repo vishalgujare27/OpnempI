@@ -25,8 +25,11 @@ main ()
 	}
     }
 
+double start_time = MPI_Wtime();
 
-  MPI_Scatter (global_arr, chunksize, MPI_INT, local_arr, chunksize, MPI_INT,
+
+
+  MPI_Scatter(global_arr, chunksize, MPI_INT, local_arr, chunksize, MPI_INT,
 	       0, MPI_COMM_WORLD);
 
   int local_sum = 0;
@@ -42,10 +45,15 @@ main ()
   MPI_Reduce (&local_sum, &final_sum, 1, MPI_INT, MPI_SUM, 0,
 	      MPI_COMM_WORLD);
 
+double end_time = MPI_Wtime();
+
+
   printf ("rank = %d \t total sum = %d \n", rank, final_sum);
 
   if (rank == 0)
     {
+
+printf("Total time taken : %lf ",(end_time - start_time) );
 
       free (global_arr);
 
