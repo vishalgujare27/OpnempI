@@ -3,7 +3,7 @@
 #include<omp.h>
 
 int main() {
-    int n = 200;
+    int n = 1000;
     int i, j, k;
 
    
